@@ -527,6 +527,38 @@ namespace Chummer
             UpdateCyberwareInfo();
         }
 
+        private void EssenceFilter(object sender, EventArgs e)
+        {
+            if (_blnLoading)
+                return;
+
+            _blnLoading = true;
+            if (string.IsNullOrWhiteSpace(nudMinimumESS.Text))
+            {
+                nudMinimumESS.Value = 0;
+            }
+            if (string.IsNullOrWhiteSpace(nudExactESS.Text))
+            {
+                nudExactESS.Value = 0;
+            }
+            if (string.IsNullOrWhiteSpace(nudMaximumESS.Text))
+            {
+                nudMaximumESS.Value = 0;
+            }
+
+            if (nudMaximumESS.Value < nudMinimumESS.Value)
+            {
+                if (sender == nudMaximumESS)
+                    nudMinimumESS.Value = nudMaximumESS.Value;
+                else
+                    nudMaximumESS.Value = nudMinimumESS.Value;
+            }
+
+            _blnLoading = false;
+
+            RefreshList(_strSelectedCategory);
+        }
+
         #endregion Control Events
 
         #region Properties
@@ -968,6 +1000,38 @@ namespace Chummer
                 if (objCurrentGrade.SecondHand)
                     sbdFilter.Append(" and not(nosecondhand)");
             }
+
+            if (nudExactESS.Value != 0)
+            {
+                string strValueBP = nudExactESS.Value.ToString(GlobalOptions.InvariantCultureInfo);
+                sbdFilter.Append(" and (ess = " + strValueBP + ")");
+            }
+            else if (nudMinimumESS.Value != 0 || nudMaximumESS.Value != 0)
+            {
+                if (nudMinimumESS.Value < 0 == nudMaximumESS.Value < 0)
+                {
+                    sbdFilter.Append(" and (" + GetEssenceRangeString(nudMaximumESS.ValueAsInt, nudMinimumESS.ValueAsInt) + ")");
+                }
+                else
+                {
+                    sbdFilter.Append("and ((" + GetEssenceRangeString(nudMaximumESS.ValueAsInt, 0)
+                                              + ") or (" + GetEssenceRangeString(-1, nudMinimumESS.ValueAsInt) + "))");
+                }
+
+                string GetEssenceRangeString(int intMax, int intMin)
+                {
+                    string strMax = intMax.ToString(GlobalOptions.InvariantCultureInfo);
+                    string strMin = intMin.ToString(GlobalOptions.InvariantCultureInfo);
+                    string strMostExtremeValue = (intMax > 0 ? intMax : intMin).ToString(GlobalOptions.InvariantCultureInfo);
+                    string strValueDiff = (intMax > 0 ? intMax - intMin : intMin - intMax).ToString(GlobalOptions.InvariantCultureInfo);
+                    return "(ess >= " + strMin + " and ess <= " + strMax +
+                           ") or (not(nolevels) and limit != 'False' and ess * ess <= ess * " +
+                           strMostExtremeValue + " and (ess * (" + strMostExtremeValue + " mod ess) <= ess * " +
+                           strValueDiff + ") and ((ess >= 0 and ess * limit >= " + strMin +
+                           ") or (ess < 0 and ess * limit <= " + strMax + ")))";
+                }
+            }
+
             if (!string.IsNullOrEmpty(txtSearch.Text))
                 sbdFilter.Append(" and " + CommonFunctions.GenerateSearchXPath(txtSearch.Text));
             XPathNodeIterator node = null;
@@ -1431,5 +1495,10 @@ namespace Chummer
         }
 
         #endregion Methods
+
+        private void KarmaFilter(object sender, EventArgs e)
+        {
+
+        }
     }
 }
