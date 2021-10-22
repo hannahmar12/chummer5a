@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="actions" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+  <xs:element name="chummer">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="version" type="xs:string" />
+        <xs:element name="actions">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" name="action">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="id" type="xs:string" />
+                    <xs:element name="name" type="xs:string" />
+                    <xs:element name="type" type="xs:string" />
+                    <xs:element minOccurs="0" name="requireunlock" />
+                    <xs:element minOccurs="0" name="initiativecost" type="xs:unsignedByte" />
+                    <xs:element minOccurs="0" name="edgecost" type="xs:unsignedByte" />
+                    <xs:element minOccurs="0" name="specname" type="xs:string" />
+                    <xs:element minOccurs="0" name="boosts">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element maxOccurs="unbounded" name="boost">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="name" type="xs:string" />
+                                <xs:element name="duration" type="xs:string" />
+                                <xs:element name="dicebonus" type="xs:string" />
+                                <xs:element minOccurs="0" name="addlimit" type="xs:string" />
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="test">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="dice" type="xs:string" />
+                          <xs:element minOccurs="0" name="limit" type="xs:string" />
+                          <xs:element minOccurs="0" name="defenselimit" type="xs:string" />
+                          <xs:element minOccurs="0" name="bonusstring" type="xs:string" />
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="source" type="xs:string" />
+                    <xs:element name="page" type="xs:unsignedShort" />
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="actions" msdata:IsDataSet="true" msdata:UseCurrentLocale="true">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="chummer" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

@@ -28,6 +28,8 @@ using System.Xml.Schema;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Org.XmlUnit.Builder;
 using Org.XmlUnit.Diff;
+using Org.XmlUnit.Input;
+using Org.XmlUnit.Validation;
 
 namespace Chummer.Tests
 {
@@ -61,7 +63,7 @@ namespace Chummer.Tests
         private DirectoryInfo TestPathInfo { get; }
 
         private FileInfo[] TestFiles { get; }
-
+        #region Tests
         // Test methods have a number in their name so that by default they execute in the order of fastest to slowest
         [TestMethod]
         public void Test00_ColorTest()
@@ -133,7 +135,23 @@ namespace Chummer.Tests
 
         // Test methods have a number in their name so that by default they execute in the order of fastest to slowest
         [TestMethod]
-        public void Test03_LoadThenSaveIsDeterministic()
+        public void Test03_ValidateXml()
+        {
+            Debug.WriteLine("Unit test initialized for: Test03_ValidateXml()");
+            string strPath = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, "data");
+            DirectoryInfo objPathInfo = new DirectoryInfo(strPath);
+            foreach (FileInfo objFile in objPathInfo.GetFiles("*.xml"))
+            {
+                Validator v = Validator.ForLanguage(Languages.W3C_XML_SCHEMA_NS_URI);
+                v.SchemaSource = new StreamSource(objFile.FullName.Replace(".xml",".xsd"));
+                ValidationResult r = v.ValidateInstance(new StreamSource(objFile.FullName));
+                Assert.IsTrue(r.Valid);
+            }
+        }
+
+        // Test methods have a number in their name so that by default they execute in the order of fastest to slowest
+        [TestMethod]
+        public void Test04_LoadThenSaveIsDeterministic()
         {
             Debug.WriteLine("Unit test initialized for: Test03_LoadThenSaveIsDeterministic()");
             foreach (FileInfo objBaseFileInfo in TestFiles)
@@ -191,7 +209,7 @@ namespace Chummer.Tests
         }
 
         [TestMethod]
-        public void Test04_LoadThenPrint()
+        public void Test05_LoadThenPrint()
         {
             Debug.WriteLine("Unit test initialized for: Test04_LoadThenPrint()");
             foreach (FileInfo objFileInfo in TestFiles)
@@ -215,7 +233,7 @@ namespace Chummer.Tests
 
         // Test methods have a number in their name so that by default they execute in the order of fastest to slowest
         [TestMethod]
-        public void Test05_LoadCharacterForms()
+        public void Test06_LoadCharacterForms()
         {
             Debug.WriteLine("Unit test initialized for: Test05_LoadCharacterForms()");
             frmChummerMain frmOldMainForm = Program.MainForm;
@@ -269,7 +287,8 @@ namespace Chummer.Tests
             }
             Program.MainForm = frmOldMainForm;
         }
-
+        #endregion
+        #region Methods
         /// <summary>
         /// Validate that a given list of Characters can be successfully loaded.
         /// </summary>
@@ -347,5 +366,6 @@ namespace Chummer.Tests
                 Assert.Fail(strErrorMessage);
             }
         }
+        #endregion
     }
 }
